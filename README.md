@@ -3,7 +3,7 @@
 ![Main Screen](screenshots/2.png)
 ![Main Screen](screenshots/3.png)
 ![Main Screen](screenshots/4.png)
-![Main Screen](screenshots/4.png)
+![Main Screen](screenshots/5.png)
 
 
 Добро пожаловать в демо-приложение для аренды велосипедов!
