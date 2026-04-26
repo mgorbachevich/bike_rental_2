@@ -8,15 +8,18 @@ A new Flutter project.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+Добро пожаловать в демо-приложение для аренды велосипедов!
 
-A few resources to get you started if this is your first Flutter project:
+Это приложение — простой и быстрый способ найти «железного коня» для прогулки в парке или поездки по делам.
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+Что можно сделать в этой версии:
+Посмотреть доступные модели.
+Оценить удобный интерфейс.
+Проверить, как работают бронирование и ареда.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-# bike_rental_2
+Подготовлены тестовые аккаунты, чтобы вы могли всё изучить прямо сейчас без лишних регистраций:
+Пользователь №1: логин: 1, пароль: 1
+Пользователь №2: логин: 2, пароль: 2
+
+Заходите, тестируйте и чувствуйте ветер в волосах (пусть пока и виртуальный)!
+
