@@ -1,5 +1,9 @@
 # bike_rental_2
-
+![Main Screen](screenshots/1.png)
+![Main Screen](screenshots/2.png)
+![Main Screen](screenshots/3.png)
+![Main Screen](screenshots/4.png)
+![Main Screen](screenshots/4.png)
 A new Flutter project.
 
 ## Getting Started
