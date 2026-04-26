@@ -4,9 +4,7 @@
 ![Main Screen](screenshots/3.png)
 ![Main Screen](screenshots/4.png)
 ![Main Screen](screenshots/4.png)
-A new Flutter project.
 
-## Getting Started
 
 Добро пожаловать в демо-приложение для аренды велосипедов!
 
