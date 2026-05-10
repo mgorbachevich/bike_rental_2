@@ -1,8 +1,8 @@
 import 'package:bike_rental_2/map/map_service.dart';
-import 'package:bike_rental_2/constants.dart';
 import 'package:bike_rental_2/repository/bike.dart';
 import 'package:bike_rental_2/repository/rental.dart';
 import 'package:bike_rental_2/repository/user.dart';
+import 'package:bike_rental_2/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -56,10 +56,10 @@ class Repository {
     _rentalBox = await _openBox<Rental>('rentals');
     _userBox = await _openBox<User>('users');
 
-    if (clearRentalBox) {
+    if (settings.clearRentalBox) {
       await _rentalBox!.clear();
     }
-    if (clearAllBoxes) {
+    if (settings.clearAllBoxes) {
       await _bikeBox!.clear();
       await _rentalBox!.clear();
       await _userBox!.clear();

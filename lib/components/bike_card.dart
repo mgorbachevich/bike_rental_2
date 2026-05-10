@@ -93,7 +93,7 @@ class _BikeCardState extends State<BikeCard> {
           // Bike id:
           iconedText(
             Icons.pedal_bike,
-            accentColor,
+            primaryColor,
             widget.bike!.id,
             onSurfaceColor,
           ),
@@ -113,7 +113,7 @@ class _BikeCardState extends State<BikeCard> {
             show: showCharge,
             child: iconedText(
               Icons.battery_charging_full,
-              accentColor,
+              primaryColor,
               widget.bike!.charge.toString(),
               onSurfaceColor,
             ),
@@ -124,7 +124,7 @@ class _BikeCardState extends State<BikeCard> {
             show: showDistance,
             child: iconedText(
               Icons.straighten,
-              accentColor,
+              primaryColor,
               '${mapService.bikeDistance(widget.bike!).toStringAsFixed(3)} км',
               onSurfaceColor,
             ),
@@ -142,7 +142,7 @@ class _BikeCardState extends State<BikeCard> {
     String y = dt.year.toString().substring(2); // Берем последние 2 цифры года
     String h = dt.hour.toString().padLeft(2, '0');
     String min = dt.minute.toString().padLeft(2, '0');
-    return "$d.$m.$y $h:$min";
+    return '$d.$m.$y $h:$min';
   }
 
   String dates(Rental? rental) {
@@ -154,17 +154,21 @@ class _BikeCardState extends State<BikeCard> {
 
   // Описание бронирования/аренды:
   Widget rentalInfo() {
-    String type = widget.rental == null || widget.rental!.booking
-        ? 'Бронь '
-        : 'Аренда ';
+    bool booking = widget.rental == null || widget.rental!.booking;
+    bool newRental = !booking && widget.rental!.finish == null;
+    bool oldRental = !booking && widget.rental!.finish != null;
+
+    String type = booking ? 'Бронь ' : 'Аренда ';
     String id = widget.rental == null ? '' : widget.rental!.id;
     return Hidden(
       show: widget.rental != null,
       // Rental/Booking:
       child: Container(
         decoration: BoxDecoration(
-          color: widget.rental == null || widget.rental!.booking
+          color: booking
               ? bookingCardBackColor
+              : newRental
+              ? accentColor
               : rentalCardBackColor,
           borderRadius: BorderRadius.circular(_borderRadius),
         ),
@@ -174,20 +178,18 @@ class _BikeCardState extends State<BikeCard> {
           children: [
             // Rental/Booking id:
             iconedText(
-              widget.rental == null || widget.rental!.booking
-                  ? Icons.bookmark_outline
-                  : Icons.key,
-              accentColor,
+              booking ? Icons.bookmark_outline : Icons.key,
+              newRental ? onAccentColor : accentColor,
               type + id,
-              onSurfaceColor,
+              newRental ? onAccentColor : onSurfaceColor,
             ),
             SizedBox(height: 8),
             // Rental/Booking time:
             iconedText(
               Icons.schedule_outlined,
-              accentColor,
+              newRental ? onAccentColor : accentColor,
               dates(widget.rental),
-              onSurfaceColor,
+              newRental ? onAccentColor : onSurfaceColor,
             ),
           ],
         ),

@@ -55,7 +55,7 @@ class UIService {
         children: [
           Expanded(
             child: items.isEmpty
-                ? noData('Нет данных')
+                ? noData(Icons.warning, 'Нет данных')
                 : ListView(children: items),
           ),
         ],
@@ -64,11 +64,11 @@ class UIService {
   }
 
   // Картинка когда список пуст:
-  Widget noData(String text) {
+  Widget noData(IconData icon, String text) {
     return Column(
       children: [
         const SizedBox(height: 16),
-        const Icon(Icons.warning, size: 48, color: warningColor),
+        Icon(icon, size: 48, color: warningColor),
         const SizedBox(height: 8),
         Text(text, textAlign: TextAlign.center, style: messageTextStyle()),
       ],

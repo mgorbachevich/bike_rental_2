@@ -47,6 +47,39 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   // Кнопки навигации:
+  Widget navigation() {
+    return _status == ProfileStatus.rental
+        ? Row(
+            children: [
+              bookingButton(false),
+              const SizedBox(width: 2),
+              cancelRentalButton(),
+              const SizedBox(width: 2),
+              historyButton(),
+            ],
+          )
+        : _status == ProfileStatus.booking
+        ? Row(
+            children: [
+              cancelBookingButton(),
+              const SizedBox(width: 2),
+              rentalButton(),
+              const SizedBox(width: 2),
+              historyButton(),
+            ],
+          )
+        // _status == ProfileStatus.empty
+        : Row(
+            children: [
+              bookingButton(true),
+              const SizedBox(width: 2),
+              rentalButton(),
+              const SizedBox(width: 2),
+              historyButton(),
+            ],
+          );
+  }
+
   Widget rentalButton() {
     return Expanded(
       child: BottomButton(
@@ -119,8 +152,19 @@ class _ProfilePageState extends State<ProfilePage> {
 
   // Нажали Отменить Аренду:
   void onCancelRentalClicked() {
-    dialogService.showConfirmation(context, 'Завершить аренду?', () async {
-      await finishRental();
+    dialogService.showConfirmation(context, 'Завершить аренду?', () {
+      int n = DateTime.now()
+          .difference(repository.activeRental!.start!)
+          .inMinutes;
+      if (n > 0) {
+        dialogService.showMessage(
+          context,
+          'Аренда завершена. Время в минутах: $n.\nНе забудьте оплатить',
+          DialogType.success,
+          () {},
+        );
+      }
+      finishRental();
     }, () {});
   }
 
@@ -168,40 +212,6 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // Кнопки навигации:
-  Widget navigation() {
-    return _status == ProfileStatus.rental
-        ? Row(
-            children: [
-              bookingButton(false),
-              const SizedBox(width: 2),
-              cancelRentalButton(),
-              const SizedBox(width: 2),
-              historyButton(),
-            ],
-          )
-        : _status == ProfileStatus.booking
-        ? Row(
-            children: [
-              cancelBookingButton(),
-              const SizedBox(width: 2),
-              rentalButton(),
-              const SizedBox(width: 2),
-              historyButton(),
-            ],
-          )
-        // _status == ProfileStatus.empty
-        : Row(
-            children: [
-              bookingButton(true),
-              const SizedBox(width: 2),
-              rentalButton(),
-              const SizedBox(width: 2),
-              historyButton(),
-            ],
-          );
-  }
-
   void onFinishBooking() {
     finishRental();
     dialogService.showMessage(
@@ -226,6 +236,7 @@ class _ProfilePageState extends State<ProfilePage> {
               children: [
                 _status == ProfileStatus.empty
                     ? uiService.noData(
+                        Icons.pedal_bike,
                         'Нет бронирования или аренды. Выберите велосипед',
                       )
                     : Padding(

@@ -9,5 +9,7 @@ class Settings {
     return _instance;
   }
 
+  bool clearAllBoxes = true; // Очистка БД перед запуском
+  bool clearRentalBox = false; // Очистка только истории перед запуском
   int maxBookingMinutes = 60;
 }

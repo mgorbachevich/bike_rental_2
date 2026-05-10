@@ -26,9 +26,6 @@ const double bottomButtonHeight = 104; // Высота кнопки навига
 const String defaultImage =
     'assets/images/0.png'; // Картинка велосипеда по умолчанию
 
-const bool clearAllBoxes = false; // Очистка БД перед запуском
-const bool clearRentalBox = false; // Очистка только истории перед запуском
-
 const String aboutApp =
     'Добро пожаловать в демо-приложение для аренды велосипедов!\n\n'
     'Это приложение — простой и быстрый способ найти «железного коня» для прогулки в парке или поездки по делам.\n'
