@@ -1,3 +1,4 @@
+import 'package:bike_rental_2/components/page_scaffold.dart';
 import 'package:bike_rental_2/components/ui_service.dart';
 import 'package:bike_rental_2/constants.dart';
 import 'package:bike_rental_2/repository/repository.dart';
@@ -53,16 +54,16 @@ class _StartPageState extends State<StartPage> {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: onClicked,
-      child: constrainedScaffold(
-        context,
-        '',
-        Colors.white,
-        Padding(
+      child: PageScaffold(
+        context: context,
+        title: '',
+        backColor: Colors.white,
+        child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
             children: [
               // Заголовок с анимацией:
-              opacityAnimation(
+              uiService.opacityAnimation(
                 _showImage,
                 Text(
                   'ВелоАренда',
@@ -78,7 +79,7 @@ class _StartPageState extends State<StartPage> {
               Spacer(),
 
               // Картинка с анимацией:
-              opacityAnimation(
+              uiService.opacityAnimation(
                 _showImage,
                 Image.asset('assets/images/0.png', fit: BoxFit.contain),
               ),
@@ -86,7 +87,7 @@ class _StartPageState extends State<StartPage> {
               Spacer(),
 
               // Надпись с анимацией:
-              opacityAnimation(
+              uiService.opacityAnimation(
                 _enableClick,
                 Text(
                   'Нажмите на экран чтобы продолжить',

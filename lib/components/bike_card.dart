@@ -1,4 +1,5 @@
 import 'package:bike_rental_2/components/hidden.dart';
+import 'package:bike_rental_2/map/map_service.dart';
 import 'package:bike_rental_2/constants.dart';
 import 'package:bike_rental_2/repository/bike.dart';
 import 'package:bike_rental_2/repository/rental.dart';
@@ -13,12 +14,12 @@ class BikeCard extends StatefulWidget {
     super.key,
     required this.bike,
     this.rental,
-    required this.inList,
+    required this.smallImage,
   });
 
   final Bike? bike;
   final Rental? rental;
-  final bool inList; // В списке или отдельно
+  final bool smallImage; // В списке или отдельно
 
   @override
   State<BikeCard> createState() => _BikeCardState();
@@ -30,7 +31,7 @@ class _BikeCardState extends State<BikeCard> {
     return Center(
       child: ClipRRect(
         borderRadius: const BorderRadius.all(Radius.circular(_borderRadius)),
-        child: widget.inList
+        child: widget.smallImage
             ? Image.asset(
                 widget.bike!.image,
                 width: _smallImageSize,
@@ -57,27 +58,44 @@ class _BikeCardState extends State<BikeCard> {
     );
   }
 
+  Widget iconedText(
+    IconData? icon,
+    Color iconColor,
+    String text,
+    Color textColor,
+  ) {
+    return Row(
+      children: [
+        Icon(icon, size: 24, color: iconColor),
+        const SizedBox(width: 8),
+        Text(
+          text,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: textColor,
+          ),
+        ),
+      ],
+    );
+  }
+
   // Описание велосипеда:
   Widget bikeInfo() {
+    final bool showCharge = widget.bike!.electro;
+    final bool showDistance = widget.rental == null || !widget.smallImage;
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Bike id:
-          Row(
-            children: [
-              Icon(Icons.pedal_bike, size: 24, color: accentColor),
-              const SizedBox(width: 8),
-              Text(
-                widget.bike!.id,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: onSurfaceColor,
-                ),
-              ),
-            ],
+          iconedText(
+            Icons.pedal_bike,
+            accentColor,
+            widget.bike!.id,
+            onSurfaceColor,
           ),
           SizedBox(height: 2),
           // Bike name:
@@ -89,27 +107,26 @@ class _BikeCardState extends State<BikeCard> {
               color: onSurfaceColor,
             ),
           ),
-          Hidden(show: widget.bike!.electro, child: const SizedBox(height: 2)),
+          Hidden(show: showCharge, child: const SizedBox(height: 2)),
+          // Bike charge:
           Hidden(
-            show: widget.bike!.electro,
-            // Bike charge:
-            child: Row(
-              children: [
-                const Icon(
-                  Icons.battery_charging_full,
-                  size: 24,
-                  color: accentColor,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  widget.bike!.charge.toString(),
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.normal,
-                    color: onSurfaceColor,
-                  ),
-                ),
-              ],
+            show: showCharge,
+            child: iconedText(
+              Icons.battery_charging_full,
+              accentColor,
+              widget.bike!.charge.toString(),
+              onSurfaceColor,
+            ),
+          ),
+          Hidden(show: showDistance, child: const SizedBox(height: 2)),
+          // Distance:
+          Hidden(
+            show: showDistance,
+            child: iconedText(
+              Icons.straighten,
+              accentColor,
+              '${mapService.bikeDistance(widget.bike!).toStringAsFixed(3)} км',
+              onSurfaceColor,
             ),
           ),
         ],
@@ -118,7 +135,7 @@ class _BikeCardState extends State<BikeCard> {
   }
 
   // Форматируем дату и время:
-  String formatDteTime(DateTime? dt) {
+  String formatDateTime(DateTime? dt) {
     if (dt == null) return '?';
     String d = dt.day.toString().padLeft(2, '0');
     String m = dt.month.toString().padLeft(2, '0');
@@ -130,8 +147,8 @@ class _BikeCardState extends State<BikeCard> {
 
   String dates(Rental? rental) {
     if (rental == null) return '';
-    String s1 = formatDteTime(rental.start);
-    String s2 = formatDteTime(rental.finish);
+    String s1 = formatDateTime(rental.start);
+    String s2 = formatDateTime(rental.finish);
     return s1 == '' ? '' : '$s1\n$s2';
   }
 
@@ -156,55 +173,21 @@ class _BikeCardState extends State<BikeCard> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Rental/Booking id:
-            Row(
-              children: [
-                Icon(
-                  widget.rental == null || widget.rental!.booking
-                      ? Icons.bookmark_outline
-                      : Icons.key,
-                  size: 24,
-                  color: accentColor,
-                ),
-
-                SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    type + id,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: onSurfaceColor,
-                    ),
-                  ),
-                ),
-              ],
+            iconedText(
+              widget.rental == null || widget.rental!.booking
+                  ? Icons.bookmark_outline
+                  : Icons.key,
+              accentColor,
+              type + id,
+              onSurfaceColor,
             ),
-
             SizedBox(height: 8),
             // Rental/Booking time:
-            Row(
-              children: [
-                const Icon(
-                  Icons.schedule_outlined,
-                  size: 24,
-                  color: accentColor,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  dates(widget.rental),
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight:
-                        widget.rental == null || widget.rental!.finish == null
-                        ? FontWeight.bold
-                        : FontWeight.normal,
-                    color:
-                        widget.rental == null || widget.rental!.finish == null
-                        ? accentColor
-                        : onSurfaceColor,
-                  ),
-                ),
-              ],
+            iconedText(
+              Icons.schedule_outlined,
+              accentColor,
+              dates(widget.rental),
+              onSurfaceColor,
             ),
           ],
         ),
@@ -214,43 +197,36 @@ class _BikeCardState extends State<BikeCard> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: widget.inList
-          ? const EdgeInsets.all(4)
-          : const EdgeInsets.symmetric(vertical: 4, horizontal: 64),
-
-      // Фон карточки:
-      child: Container(
-        decoration: BoxDecoration(
-          color: cardColor,
-          borderRadius: BorderRadius.circular(_borderRadius),
-          border: Border.all(
-            color: cardColor, // Border color
-            width: 2.0, // Border thickness
-          ),
+    return Container(
+      decoration: BoxDecoration(
+        color: cardColor,
+        borderRadius: BorderRadius.circular(_borderRadius),
+        border: Border.all(
+          color: cardColor, // Border color
+          width: 2.0, // Border thickness
         ),
+      ),
 
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Hidden(show: widget.inList, child: bikeImage()),
-            Hidden(show: widget.inList, child: const SizedBox(width: 8)),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Hidden(show: !widget.inList, child: bikeImage()),
-                  Hidden(
-                    show: !widget.inList,
-                    child: const SizedBox(height: 8),
-                  ),
-                  bikeInfo(),
-                  rentalInfo(),
-                ],
-              ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Hidden(show: widget.smallImage, child: bikeImage()),
+          Hidden(show: widget.smallImage, child: const SizedBox(width: 8)),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Hidden(show: !widget.smallImage, child: bikeImage()),
+                Hidden(
+                  show: !widget.smallImage,
+                  child: const SizedBox(height: 8),
+                ),
+                bikeInfo(),
+                rentalInfo(),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

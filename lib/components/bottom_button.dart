@@ -49,7 +49,7 @@ class _BottomButtonState extends State<BottomButton> {
               Text(
                 widget.text,
                 textAlign: TextAlign.center,
-                style: buttonTextStyle(),
+                style: uiService.buttonTextStyle(),
               ),
             ],
           ),

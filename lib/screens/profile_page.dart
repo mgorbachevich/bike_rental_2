@@ -1,8 +1,10 @@
 import 'package:bike_rental_2/components/bike_card.dart';
 import 'package:bike_rental_2/components/bottom_button.dart';
 import 'package:bike_rental_2/components/dialog_service.dart';
+import 'package:bike_rental_2/components/page_scaffold.dart';
 import 'package:bike_rental_2/components/ui_service.dart';
 import 'package:bike_rental_2/constants.dart';
+import 'package:bike_rental_2/repository/booking_observer.dart';
 import 'package:bike_rental_2/repository/repository.dart';
 import 'package:bike_rental_2/screens/bike_list_page.dart';
 import 'package:bike_rental_2/screens/history_page.dart';
@@ -20,7 +22,21 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   ProfileStatus _status = ProfileStatus.empty;
 
-  void setStatus() {
+  @override
+  void initState() {
+    repository.setUserLastRental();
+    bookingObserver.addListener(onFinishBooking); // Паттерн Обозреватель
+    update();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    bookingObserver.removeListener(onFinishBooking); // Паттерн Обозреватель
+    super.dispose();
+  }
+
+  void update() {
     if (repository.activeRental == null || repository.rentaledBike == null) {
       _status = ProfileStatus.empty;
     } else {
@@ -87,23 +103,24 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  Future<void> finishRental() async {
+    await repository.finishRental();
+    setState(() {
+      update();
+    });
+  }
+
   // Нажали Отменить Бронирование:
-  Future<void> onCancelBookingClicked() async {
+  void onCancelBookingClicked() {
     dialogService.showConfirmation(context, 'Отменить бронирование?', () async {
-      await repository.finishRental();
-      setState(() {
-        setStatus();
-      });
+      await finishRental();
     }, () {});
   }
 
   // Нажали Отменить Аренду:
-  Future<void> onCancelRentalClicked() async {
+  void onCancelRentalClicked() {
     dialogService.showConfirmation(context, 'Завершить аренду?', () async {
-      await repository.finishRental();
-      setState(() {
-        setStatus();
-      });
+      await finishRental();
     }, () {});
   }
 
@@ -114,7 +131,7 @@ class _ProfilePageState extends State<ProfilePage> {
       MaterialPageRoute(builder: (context) => BikeListPage(booking: true)),
     );
     setState(() {
-      setStatus();
+      update();
     });
   }
 
@@ -127,7 +144,7 @@ class _ProfilePageState extends State<ProfilePage> {
         () async {
           await repository.startRental(repository.rentaledBike, false);
           setState(() {
-            setStatus();
+            update();
           });
         },
         () {},
@@ -138,7 +155,7 @@ class _ProfilePageState extends State<ProfilePage> {
         MaterialPageRoute(builder: (context) => BikeListPage(booking: false)),
       );
       setState(() {
-        setStatus();
+        update();
       });
     }
   }
@@ -185,31 +202,42 @@ class _ProfilePageState extends State<ProfilePage> {
           );
   }
 
-  @override
-  void initState() {
-    repository.setUserLastRental();
-    setStatus();
-    super.initState();
+  void onFinishBooking() {
+    finishRental();
+    dialogService.showMessage(
+      context,
+      'Время бронирования истекло',
+      DialogType.warning,
+      () {},
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return constrainedScaffold(
-      context,
-      'Профиль',
-      surfaceColor,
-      Column(
+    return PageScaffold(
+      context: context,
+      title: 'Профиль',
+      backColor: surfaceColor,
+      child: Column(
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Column(
               children: [
                 _status == ProfileStatus.empty
-                    ? noData('Нет бронирования или аренды. Выберите велосипед')
-                    : BikeCard(
-                        bike: repository.rentaledBike,
-                        rental: repository.activeRental,
-                        inList: false,
+                    ? uiService.noData(
+                        'Нет бронирования или аренды. Выберите велосипед',
+                      )
+                    : Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 56,
+                          vertical: 4,
+                        ),
+                        child: BikeCard(
+                          bike: repository.rentaledBike,
+                          rental: repository.activeRental,
+                          smallImage: false,
+                        ),
                       ),
               ],
             ),

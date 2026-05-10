@@ -1,7 +1,7 @@
 import 'package:bike_rental_2/components/bottom_button.dart';
 import 'package:bike_rental_2/components/dialog_service.dart';
 import 'package:bike_rental_2/components/editor.dart';
-import 'package:bike_rental_2/components/ui_service.dart';
+import 'package:bike_rental_2/components/page_scaffold.dart';
 import 'package:bike_rental_2/constants.dart';
 import 'package:bike_rental_2/repository/repository.dart';
 import 'package:bike_rental_2/screens/help_page.dart';
@@ -113,11 +113,11 @@ class _AuthorisationPageState extends State<AuthorisationPage> {
 
   @override
   Widget build(BuildContext context) {
-    return constrainedScaffold(
-      context,
-      'Авторизация',
-      surfaceColor,
-      Column(
+    return PageScaffold(
+      context: context,
+      title: 'Авторизация',
+      backColor: surfaceColor,
+      child: Column(
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),

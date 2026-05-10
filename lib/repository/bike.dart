@@ -26,6 +26,12 @@ class Bike extends HiveObject {
   @HiveField(6)
   String image;
 
+  @HiveField(7)
+  double latitude;
+
+  @HiveField(8)
+  double longitude;
+
   Bike({
     this.id = '',
     this.name = 'Велосипед',
@@ -34,6 +40,8 @@ class Bike extends HiveObject {
     this.rentaled = false,
     this.charge = 0,
     this.image = '',
+    this.latitude = 0,
+    this.longitude = 0,
   }) {
     if (id == '') id = Repository.generateId();
   }

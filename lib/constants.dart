@@ -18,8 +18,7 @@ const Color rentalCardBackColor = Color(0xFFF7EBCC);
 const Color bookingCardBackColor = Color(0xFFFAF3E1);
 
 const double globalMaxWidth = 450; // Ограничение по ширине экрана
-const double defaultDialogWidth =
-    320; // Ширина окошка диалога <= globalMaxWidth
+const double defaultDialogWidth = 320; // Ширина окошка диалога
 const double defaultDialogHeight = 240; // Высота окошка диалога
 const double defaultButtonHeight = 48; // Высота кнопки в диалогах
 const double bottomButtonHeight = 104; // Высота кнопки навигации
@@ -27,7 +26,7 @@ const double bottomButtonHeight = 104; // Высота кнопки навига
 const String defaultImage =
     'assets/images/0.png'; // Картинка велосипеда по умолчанию
 
-const bool clearAllBoxes = true; // Очистка БД перед запуском
+const bool clearAllBoxes = false; // Очистка БД перед запуском
 const bool clearRentalBox = false; // Очистка только истории перед запуском
 
 const String aboutApp =

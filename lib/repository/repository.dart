@@ -1,3 +1,4 @@
+import 'package:bike_rental_2/map/map_service.dart';
 import 'package:bike_rental_2/constants.dart';
 import 'package:bike_rental_2/repository/bike.dart';
 import 'package:bike_rental_2/repository/rental.dart';
@@ -76,32 +77,64 @@ class Repository {
             name: 'Электрический',
             electro: true,
             image: 'assets/images/1.png',
+            latitude: 55.771534,
+            longitude: 37.679465,
           ),
         );
       }
       if (getBike('2') == null) {
         await addBike(
-          Bike(id: '2', name: 'Горный', image: 'assets/images/2.png'),
+          Bike(
+            id: '2',
+            name: 'Горный',
+            image: 'assets/images/2.png',
+            latitude: 55.777519,
+            longitude: 37.658865,
+          ),
         );
       }
       if (getBike('3') == null) {
         await addBike(
-          Bike(id: '3', name: 'Детский', image: 'assets/images/3.png'),
+          Bike(
+            id: '3',
+            name: 'Детский',
+            image: 'assets/images/3.png',
+            latitude: 55.764388,
+            longitude: 37.616981,
+          ),
         );
       }
       if (getBike('4') == null) {
         await addBike(
-          Bike(id: '4', name: 'Трехколесный', image: 'assets/images/4.png'),
+          Bike(
+            id: '4',
+            name: 'Трехколесный',
+            image: 'assets/images/4.png',
+            latitude: 55.727092,
+            longitude: 37.560332,
+          ),
         );
       }
       if (getBike('5') == null) {
         await addBike(
-          Bike(id: '5', name: 'Дорожный', image: 'assets/images/5.png'),
+          Bike(
+            id: '5',
+            name: 'Дорожный',
+            image: 'assets/images/5.png',
+            latitude: 55.773851,
+            longitude: 37.729590,
+          ),
         );
       }
       if (getBike('6') == null) {
         await addBike(
-          Bike(id: '6', name: 'Спортивный', image: 'assets/images/6.png'),
+          Bike(
+            id: '6',
+            name: 'Спортивный',
+            image: 'assets/images/6.png',
+            latitude: 55.799333,
+            longitude: 37.520850,
+          ),
         );
       }
     }
@@ -148,11 +181,17 @@ class Repository {
   }
 
   // Все незанятые велосипеды:
-  List<Bike> getAllFreeBikes() {
+  List<Bike> getAllFreeBikes(bool sort) {
     List<Bike> bikes = _bikeBox!.values
         .where((b) => b.locked == false && b.rentaled == false)
         .toList();
-    bikes.sort((a, b) => a.id.compareTo(b.id));
+    if (sort) {
+      // Сортировка по расстоянию от пользователя да велосипеда:
+      bikes.sort(
+        (a, b) =>
+            mapService.bikeDistance(a).compareTo(mapService.bikeDistance(b)),
+      );
+    }
     return bikes;
   }
 

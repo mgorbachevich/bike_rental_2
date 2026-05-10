@@ -1,11 +1,12 @@
+import 'package:bike_rental_2/components/bike_card.dart';
 import 'package:bike_rental_2/components/dialog_button.dart';
 import 'package:bike_rental_2/components/ui_service.dart';
 import 'package:bike_rental_2/constants.dart';
+import 'package:bike_rental_2/repository/bike.dart';
 import 'package:flutter/material.dart';
 
 enum DialogType { error, warning, success, confirmation }
 
-// Сообщения:
 final DialogService dialogService = DialogService(); // Singleton
 
 class DialogService {
@@ -33,6 +34,8 @@ class DialogService {
   Future<T?> _showAnimatedDialog<T extends Object?>(
     BuildContext context,
     List<Widget> content,
+    double width,
+    double height,
   ) {
     return showGeneralDialog(
       context: context,
@@ -46,8 +49,8 @@ class DialogService {
           ),
           child: Container(
             padding: const EdgeInsets.all(24),
-            height: defaultDialogHeight,
-            width: defaultDialogWidth,
+            width: width,
+            height: height,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -75,24 +78,33 @@ class DialogService {
     DialogType type,
     VoidCallback onOk,
   ) {
-    _showAnimatedDialog(context, [
-      _messageIcon(type),
+    _showAnimatedDialog(
+      context,
+      [
+        _messageIcon(type),
 
-      SizedBox(height: 8),
+        SizedBox(height: 8),
 
-      Text(messageText, textAlign: TextAlign.center, style: messageTextStyle()),
+        Text(
+          messageText,
+          textAlign: TextAlign.center,
+          style: uiService.messageTextStyle(),
+        ),
 
-      Spacer(),
+        Spacer(),
 
-      DialogButton(
-        text: 'Продолжить',
-        // width: defaultDialogButtonWidth, // Почему-то не работает!?
-        onClicked: () {
-          Navigator.pop(context);
-          onOk();
-        },
-      ),
-    ]);
+        DialogButton(
+          text: 'Продолжить',
+          // width: defaultDialogButtonWidth, // Почему-то не работает!?
+          onClicked: () {
+            Navigator.pop(context);
+            onOk();
+          },
+        ),
+      ],
+      defaultDialogWidth,
+      defaultDialogHeight,
+    );
   }
 
   // Сообщение Да/Нет:
@@ -102,41 +114,108 @@ class DialogService {
     VoidCallback onYes,
     VoidCallback onNo,
   ) {
-    _showAnimatedDialog(context, [
-      _messageIcon(DialogType.confirmation),
+    _showAnimatedDialog(
+      context,
+      [
+        _messageIcon(DialogType.confirmation),
 
-      SizedBox(height: 8),
+        SizedBox(height: 8),
 
-      Text(messageText, textAlign: TextAlign.center, style: messageTextStyle()),
+        Text(
+          messageText,
+          textAlign: TextAlign.center,
+          style: uiService.messageTextStyle(),
+        ),
 
-      Spacer(),
+        Spacer(),
 
-      Row(
-        children: [
-          Expanded(
-            child: DialogButton(
-              text: 'Да',
-              onClicked: () {
-                Navigator.pop(context);
-                onYes();
-              },
+        Row(
+          children: [
+            Expanded(
+              child: DialogButton(
+                text: 'Да',
+                onClicked: () {
+                  Navigator.pop(context);
+                  onYes();
+                },
+              ),
             ),
-          ),
 
-          SizedBox(width: 4),
+            SizedBox(width: 4),
 
-          Expanded(
-            child: DialogButton(
-              text: 'Нет',
-              color: secondaryColor,
-              onClicked: () {
-                Navigator.pop(context);
-                onNo();
-              },
+            Expanded(
+              child: DialogButton(
+                text: 'Нет',
+                color: secondaryColor,
+                onClicked: () {
+                  Navigator.pop(context);
+                  onNo();
+                },
+              ),
             ),
-          ),
-        ],
-      ),
-    ]);
+          ],
+        ),
+      ],
+      defaultDialogWidth,
+      defaultDialogHeight,
+    );
+  }
+
+  // Сообщение Да/Нет:
+  void showBikeConfirmation(
+    BuildContext context,
+    Bike bike,
+    String messageText,
+    VoidCallback onYes,
+    VoidCallback onNo,
+  ) {
+    _showAnimatedDialog(
+      context,
+      [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 0),
+          child: BikeCard(bike: bike, smallImage: false),
+        ),
+
+        Spacer(),
+
+        Text(
+          messageText,
+          textAlign: TextAlign.center,
+          style: uiService.messageTextStyle(),
+        ),
+
+        Spacer(),
+
+        Row(
+          children: [
+            Expanded(
+              child: DialogButton(
+                text: 'Да',
+                onClicked: () {
+                  Navigator.pop(context);
+                  onYes();
+                },
+              ),
+            ),
+
+            SizedBox(width: 4),
+
+            Expanded(
+              child: DialogButton(
+                text: 'Нет',
+                color: secondaryColor,
+                onClicked: () {
+                  Navigator.pop(context);
+                  onNo();
+                },
+              ),
+            ),
+          ],
+        ),
+      ],
+      defaultDialogWidth,
+      defaultDialogHeight * 2,
+    );
   }
 }

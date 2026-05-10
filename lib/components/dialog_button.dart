@@ -41,7 +41,7 @@ class _DialogButtonState extends State<DialogButton> {
             child: Text(
               widget.text,
               textAlign: TextAlign.center,
-              style: buttonTextStyle(),
+              style: uiService.buttonTextStyle(),
             ),
           ),
         ),

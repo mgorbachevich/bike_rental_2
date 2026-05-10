@@ -1,4 +1,5 @@
 import 'package:bike_rental_2/components/bike_card.dart';
+import 'package:bike_rental_2/components/page_scaffold.dart';
 import 'package:bike_rental_2/components/ui_service.dart';
 import 'package:bike_rental_2/constants.dart';
 import 'package:bike_rental_2/repository/bike.dart';
@@ -21,7 +22,12 @@ class _HistoryPageState extends State<HistoryPage> {
     for (var rental in repository.getAllUserRentals()) {
       Bike? bike = repository.getBike(rental.bikeId);
       if (bike != null) {
-        items.add(BikeCard(bike: bike, rental: rental, inList: true));
+        items.add(
+          Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: BikeCard(bike: bike, rental: rental, smallImage: true),
+          ),
+        );
       }
     }
     return items;
@@ -35,13 +41,13 @@ class _HistoryPageState extends State<HistoryPage> {
 
   @override
   Widget build(BuildContext context) {
-    return constrainedScaffold(
-      context,
-      'История',
-      surfaceColor,
-      Padding(
+    return PageScaffold(
+      context: context,
+      title: 'История',
+      backColor: surfaceColor,
+      child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: listPageBody(_items),
+        child: uiService.listPageBody(_items),
       ),
     );
   }

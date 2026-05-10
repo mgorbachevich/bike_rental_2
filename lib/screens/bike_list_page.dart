@@ -1,10 +1,12 @@
 import 'package:bike_rental_2/components/animated_gesture_detector.dart';
 import 'package:bike_rental_2/components/bike_card.dart';
 import 'package:bike_rental_2/components/dialog_service.dart';
+import 'package:bike_rental_2/components/page_scaffold.dart';
 import 'package:bike_rental_2/components/ui_service.dart';
 import 'package:bike_rental_2/constants.dart';
 import 'package:bike_rental_2/repository/bike.dart';
 import 'package:bike_rental_2/repository/repository.dart';
+import 'package:bike_rental_2/screens/map_page.dart';
 import 'package:flutter/material.dart';
 
 class BikeListPage extends StatefulWidget {
@@ -21,11 +23,14 @@ class _BikeListPageState extends State<BikeListPage> {
   // Загрузка велосипедов из БД и создание карточек:
   List<Widget> downloadItems() {
     List<Widget> items = [];
-    for (var bike in repository.getAllFreeBikes()) {
+    for (var bike in repository.getAllFreeBikes(true)) {
       items.add(
         AnimatedGestureDetector(
           onClicked: () => onItemClicked(bike, widget.booking),
-          child: BikeCard(bike: bike, inList: true),
+          child: Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: BikeCard(bike: bike, smallImage: true),
+          ),
         ),
       );
     }
@@ -40,11 +45,10 @@ class _BikeListPageState extends State<BikeListPage> {
 
   // Нажали на карточку велосипеда:
   void onItemClicked(Bike bike, bool booking) {
-    dialogService.showConfirmation(
+    dialogService.showBikeConfirmation(
       context,
-      booking
-          ? 'Забронировать велосипед ${bike.id}?'
-          : 'Арендовать велосипед ${bike.id}?',
+      bike,
+      booking ? 'Забронировать?' : 'Арендовать?',
       () async {
         await repository.startRental(bike, booking);
         if (mounted) {
@@ -55,15 +59,32 @@ class _BikeListPageState extends State<BikeListPage> {
     );
   }
 
+  Widget floatingButtons() {
+    return FloatingActionButton(
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MapPage(booking: widget.booking),
+          ),
+        );
+      },
+      backgroundColor: primaryColor,
+      shape: const CircleBorder(),
+      child: Icon(Icons.map, size: 24, color: onAccentColor),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return constrainedScaffold(
-      context,
-      'Велосипеды',
-      surfaceColor,
-      Padding(
+    return PageScaffold(
+      context: context,
+      title: widget.booking ? 'Бронирование' : 'Аренда',
+      backColor: surfaceColor,
+      floatingButtons: floatingButtons(),
+      child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: listPageBody(_items),
+        child: uiService.listPageBody(_items),
       ),
     );
   }
