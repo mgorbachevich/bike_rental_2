@@ -1,4 +1,4 @@
-import 'package:bike_rental_2/map/map_service.dart';
+import 'package:bike_rental_2/components/map_service.dart';
 import 'package:bike_rental_2/repository/bike.dart';
 import 'package:bike_rental_2/repository/rental.dart';
 import 'package:bike_rental_2/repository/user.dart';
@@ -26,7 +26,6 @@ class Repository {
   Box<Bike>? _bikeBox; // "Таблица" велосипедов
   Box<Rental>? _rentalBox; // "Таблица" бронирования/аренды
   Box<User>? _userBox; // "Таблица" пользователей
-
   Bike? rentaledBike; // Текущий забронированный/арендованый велосипед
   User? authorisedUser; // Авторизованный пользователь
   Rental? activeRental; // Текущее бронирование/аренда

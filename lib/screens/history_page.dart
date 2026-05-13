@@ -25,7 +25,7 @@ class _HistoryPageState extends State<HistoryPage> {
         items.add(
           Padding(
             padding: const EdgeInsets.all(4.0),
-            child: BikeCard(bike: bike, rental: rental, smallImage: true),
+            child: BikeCard(bike: bike, rental: rental, history: true),
           ),
         );
       }

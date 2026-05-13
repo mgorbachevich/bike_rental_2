@@ -247,7 +247,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         child: BikeCard(
                           bike: repository.rentaledBike,
                           rental: repository.activeRental,
-                          smallImage: false,
+                          leftImage: false,
                         ),
                       ),
               ],

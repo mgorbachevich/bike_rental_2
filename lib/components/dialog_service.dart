@@ -174,7 +174,7 @@ class DialogService {
       [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 0),
-          child: BikeCard(bike: bike, smallImage: false),
+          child: BikeCard(bike: bike, leftImage: false),
         ),
 
         Spacer(),
@@ -215,7 +215,7 @@ class DialogService {
         ),
       ],
       defaultDialogWidth,
-      defaultDialogHeight * 2,
+      defaultDialogHeight * 2.2,
     );
   }
 }

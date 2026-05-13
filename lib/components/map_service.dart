@@ -1,5 +1,5 @@
 import 'dart:math';
-import 'package:bike_rental_2/map/map_marker.dart';
+import 'package:bike_rental_2/components/ui_service.dart';
 import 'package:bike_rental_2/constants.dart';
 import 'package:bike_rental_2/repository/bike.dart';
 import 'package:bike_rental_2/repository/repository.dart';
@@ -21,8 +21,8 @@ class MapService {
   final MapController _mapController = MapController();
   double _currentZoom = 10;
   // Координаты пользователя:
-  double userLatitude = 55.756081;
-  double userLongitude = 37.637923;
+  final double _userLatitude = 55.756081;
+  final double _userLongitude = 37.637923;
 
   double distance(double lat1, double lon1, double lat2, double lon2) {
     var p = 0.017453292519943295; // Math.PI / 180
@@ -35,7 +35,12 @@ class MapService {
 
   double bikeDistance(Bike? bike) {
     if (bike == null) return 0;
-    return distance(userLatitude, userLongitude, bike.latitude, bike.longitude);
+    return distance(
+      _userLatitude,
+      _userLongitude,
+      bike.latitude,
+      bike.longitude,
+    );
   }
 
   List<Marker> getMarkers(Function(Bike?) onBikeClicked) {
@@ -46,10 +51,10 @@ class MapService {
           point: LatLng(bike.latitude, bike.longitude),
           width: 40,
           height: 40,
-          child: MapMarker(
-            onClicked: () => onBikeClicked(bike),
-            color: primaryColor,
-            icon: Icons.pedal_bike,
+          child: uiService.mapMarker(
+            () => onBikeClicked(bike),
+            primaryColor,
+            Icons.pedal_bike,
           ),
         ),
       );
@@ -57,13 +62,13 @@ class MapService {
     // Пользователь:
     markers.add(
       Marker(
-        point: LatLng(userLatitude, userLongitude),
+        point: LatLng(_userLatitude, _userLongitude),
         width: 40,
         height: 40,
-        child: MapMarker(
-          onClicked: () => onBikeClicked(null),
-          color: accentColor,
-          icon: Icons.account_circle,
+        child: uiService.mapMarker(
+          () => onBikeClicked(null),
+          accentColor,
+          Icons.account_circle,
         ),
       ),
     );
@@ -72,7 +77,7 @@ class MapService {
 
   void moveCenterToUser() {
     _currentZoom = _mapController.camera.zoom;
-    _mapController.move(LatLng(userLatitude, userLongitude), _currentZoom);
+    _mapController.move(LatLng(_userLatitude, _userLongitude), _currentZoom);
   }
 
   void zoomIn() {
@@ -91,7 +96,7 @@ class MapService {
     return FlutterMap(
       mapController: _mapController,
       options: MapOptions(
-        initialCenter: LatLng(userLatitude, userLongitude),
+        initialCenter: LatLng(_userLatitude, _userLongitude),
         initialZoom: _currentZoom,
       ),
       children: [

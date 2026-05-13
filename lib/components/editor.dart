@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 const double _borderRadius = 8;
 
 // Ввод текста:
-class Editor extends StatefulWidget {
+class Editor extends StatelessWidget {
   const Editor({
     super.key,
     required this.controller,
@@ -22,11 +22,6 @@ class Editor extends StatefulWidget {
   final IconData? icon;
 
   @override
-  State<Editor> createState() => _EditorState();
-}
-
-class _EditorState extends State<Editor> {
-  @override
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(color: Colors.transparent),
@@ -34,11 +29,11 @@ class _EditorState extends State<Editor> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Hidden(
-            show: widget.icon != null,
-            child: Icon(widget.icon, color: primaryColor),
+            show: icon != null,
+            child: Icon(icon, color: primaryColor),
           ),
 
-          Hidden(show: widget.icon != null, child: const SizedBox(width: 16)),
+          Hidden(show: icon != null, child: const SizedBox(width: 16)),
 
           Expanded(
             child: Column(
@@ -48,7 +43,7 @@ class _EditorState extends State<Editor> {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Text(
-                      widget.label,
+                      label,
                       style: const TextStyle(
                         fontSize: 12,
                         color: onSurfaceColor,
@@ -65,8 +60,8 @@ class _EditorState extends State<Editor> {
                     fontWeight: FontWeight.bold,
                     color: onSurfaceColor,
                   ),
-                  autofocus: widget.autofocus,
-                  controller: widget.controller,
+                  autofocus: autofocus,
+                  controller: controller,
                   //validator:
                   decoration: InputDecoration(
                     filled: true,
@@ -108,7 +103,7 @@ class _EditorState extends State<Editor> {
                       color: errorColor,
                     ),
                     //labelText: label,
-                    hintText: widget.hint,
+                    hintText: hint,
                   ),
                 ),
               ],

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:bike_rental_2/constants.dart';
 
-class PageScaffold extends StatefulWidget {
+class PageScaffold extends StatelessWidget {
   const PageScaffold({
     super.key,
     required this.context,
@@ -18,26 +18,18 @@ class PageScaffold extends StatefulWidget {
   final Widget child;
 
   @override
-  State<PageScaffold> createState() => _PageScaffoldState();
-}
-
-class _PageScaffoldState extends State<PageScaffold> {
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: widget.backColor,
-      appBar: AppBar(
-        backgroundColor: widget.backColor,
-        title: Text(widget.title),
-      ),
+      backgroundColor: backColor,
+      appBar: AppBar(backgroundColor: backColor, title: Text(title)),
       body: Align(
         alignment: Alignment.topCenter,
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: globalMaxWidth),
-          child: widget.child,
+          child: child,
         ),
       ),
-      floatingActionButton: widget.floatingButtons,
+      floatingActionButton: floatingButtons,
     );
   }
 }

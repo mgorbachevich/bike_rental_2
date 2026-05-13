@@ -10,11 +10,11 @@ final BookingObserver bookingObserver = BookingObserver(); // Singleton
 class BookingObserver extends ChangeNotifier {
   static final BookingObserver _instance = BookingObserver._internal();
 
-  static const int timerSeconds = 30;
+  static const int _timerSeconds = 30;
 
   BookingObserver._internal() {
     // Запуск таймера в конструкторе:
-    Timer.periodic(const Duration(seconds: timerSeconds), (v) {
+    Timer.periodic(const Duration(seconds: _timerSeconds), (v) {
       if (repository.activeRental != null &&
           repository.activeRental!.booking &&
           repository.activeRental!.start != null &&

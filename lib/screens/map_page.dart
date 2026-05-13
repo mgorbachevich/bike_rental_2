@@ -1,6 +1,6 @@
 import 'package:bike_rental_2/components/dialog_service.dart';
 import 'package:bike_rental_2/components/page_scaffold.dart';
-import 'package:bike_rental_2/map/map_service.dart';
+import 'package:bike_rental_2/components/map_service.dart';
 import 'package:bike_rental_2/constants.dart';
 import 'package:bike_rental_2/repository/bike.dart';
 import 'package:bike_rental_2/repository/repository.dart';

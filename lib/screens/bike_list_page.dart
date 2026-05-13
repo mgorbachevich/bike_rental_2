@@ -25,11 +25,11 @@ class _BikeListPageState extends State<BikeListPage> {
     List<Widget> items = [];
     for (var bike in repository.getAllFreeBikes(true)) {
       items.add(
-        AnimatedGestureDetector(
-          onClicked: () => onItemClicked(bike, widget.booking),
-          child: Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: BikeCard(bike: bike, smallImage: true),
+        Padding(
+          padding: const EdgeInsets.all(4.0),
+          child: BikeCard(
+            bike: bike,
+            onClicked: () => onItemClicked(bike, widget.booking),
           ),
         ),
       );
@@ -69,7 +69,7 @@ class _BikeListPageState extends State<BikeListPage> {
           ),
         );
       },
-      backgroundColor: primaryColor,
+      backgroundColor: accentColor,
       shape: const CircleBorder(),
       child: Icon(Icons.map, size: 24, color: onAccentColor),
     );

@@ -14,8 +14,7 @@ const Color onSurfaceColor = Colors.black;
 const Color onAccentColor = Colors.white;
 const Color surfaceColor = Color(0xFFF4E2B4);
 const Color cardColor = Color(0xFFFDF9F0);
-const Color rentalCardBackColor = Color(0xFFF7EBCC);
-const Color bookingCardBackColor = Color(0xFFFAF3E1);
+const Color rentalBackColor = Color(0xFFF7EBCC);
 
 const double globalMaxWidth = 450; // Ограничение по ширине экрана
 const double defaultDialogWidth = 320; // Ширина окошка диалога

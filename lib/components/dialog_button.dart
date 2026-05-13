@@ -3,7 +3,7 @@ import 'package:bike_rental_2/constants.dart';
 import 'package:flutter/material.dart';
 
 // Кнопка простая без анимации для диалогов:
-class DialogButton extends StatefulWidget {
+class DialogButton extends StatelessWidget {
   const DialogButton({
     super.key,
     required this.text,
@@ -20,26 +20,22 @@ class DialogButton extends StatefulWidget {
   final double height;
 
   @override
-  State<DialogButton> createState() => _DialogButtonState();
-}
-
-class _DialogButtonState extends State<DialogButton> {
-  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(2),
       child: GestureDetector(
-        onTap: widget.onClicked,
+        onTap: onClicked,
         child: Container(
-          height: widget.height,
+          height: height,
           decoration: BoxDecoration(
-            color: widget.enabled ? widget.color : disabledColor,
-            borderRadius: BorderRadius.circular(widget.height / 2),
+            color: enabled ? color : disabledColor,
+            borderRadius: BorderRadius.circular(height / 2),
+            boxShadow: [uiService.buttonShadow()],
           ),
           padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 0),
           child: Center(
             child: Text(
-              widget.text,
+              text,
               textAlign: TextAlign.center,
               style: uiService.buttonTextStyle(),
             ),

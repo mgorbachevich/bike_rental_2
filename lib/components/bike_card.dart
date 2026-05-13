@@ -1,5 +1,7 @@
+import 'package:bike_rental_2/components/animated_gesture_detector.dart';
 import 'package:bike_rental_2/components/hidden.dart';
-import 'package:bike_rental_2/map/map_service.dart';
+import 'package:bike_rental_2/components/ui_service.dart';
+import 'package:bike_rental_2/components/map_service.dart';
 import 'package:bike_rental_2/constants.dart';
 import 'package:bike_rental_2/repository/bike.dart';
 import 'package:bike_rental_2/repository/rental.dart';
@@ -9,31 +11,30 @@ const double _smallImageSize = 128;
 const double _borderRadius = 24;
 
 // Карточка велосипеда и бронирования/аренды:
-class BikeCard extends StatefulWidget {
+class BikeCard extends StatelessWidget {
   const BikeCard({
     super.key,
     required this.bike,
     this.rental,
-    required this.smallImage,
+    this.leftImage = true,
+    this.history = false,
+    this.onClicked,
   });
 
   final Bike? bike;
   final Rental? rental;
-  final bool smallImage; // В списке или отдельно
+  final bool leftImage; // Слева или сверху(false)
+  final bool history;
+  final VoidCallback? onClicked;
 
-  @override
-  State<BikeCard> createState() => _BikeCardState();
-}
-
-class _BikeCardState extends State<BikeCard> {
   // Картинка:
   Widget bikeImage() {
     return Center(
       child: ClipRRect(
         borderRadius: const BorderRadius.all(Radius.circular(_borderRadius)),
-        child: widget.smallImage
+        child: leftImage
             ? Image.asset(
-                widget.bike!.image,
+                bike!.image,
                 width: _smallImageSize,
                 height: _smallImageSize,
                 fit: BoxFit.cover,
@@ -48,7 +49,7 @@ class _BikeCardState extends State<BikeCard> {
                 },
               )
             : Image.asset(
-                widget.bike!.image,
+                bike!.image,
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
                   return Image.asset(defaultImage, fit: BoxFit.cover);
@@ -58,32 +59,10 @@ class _BikeCardState extends State<BikeCard> {
     );
   }
 
-  Widget iconedText(
-    IconData? icon,
-    Color iconColor,
-    String text,
-    Color textColor,
-  ) {
-    return Row(
-      children: [
-        Icon(icon, size: 24, color: iconColor),
-        const SizedBox(width: 8),
-        Text(
-          text,
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: textColor,
-          ),
-        ),
-      ],
-    );
-  }
-
   // Описание велосипеда:
   Widget bikeInfo() {
-    final bool showCharge = widget.bike!.electro;
-    final bool showDistance = widget.rental == null || !widget.smallImage;
+    final bool showCharge = !history && bike!.electro;
+    final bool showDistance = !history && (rental == null || !leftImage);
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
@@ -91,16 +70,17 @@ class _BikeCardState extends State<BikeCard> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Bike id:
-          iconedText(
+          uiService.iconedText(
             Icons.pedal_bike,
+            onAccentColor,
             primaryColor,
-            widget.bike!.id,
+            bike!.id,
             onSurfaceColor,
           ),
           SizedBox(height: 2),
           // Bike name:
           Text(
-            widget.bike!.name,
+            bike!.name,
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.normal,
@@ -111,10 +91,11 @@ class _BikeCardState extends State<BikeCard> {
           // Bike charge:
           Hidden(
             show: showCharge,
-            child: iconedText(
+            child: uiService.iconedText(
               Icons.battery_charging_full,
-              primaryColor,
-              widget.bike!.charge.toString(),
+              onAccentColor,
+              accentColor,
+              bike!.charge.toString(),
               onSurfaceColor,
             ),
           ),
@@ -122,10 +103,11 @@ class _BikeCardState extends State<BikeCard> {
           // Distance:
           Hidden(
             show: showDistance,
-            child: iconedText(
+            child: uiService.iconedText(
               Icons.straighten,
-              primaryColor,
-              '${mapService.bikeDistance(widget.bike!).toStringAsFixed(3)} км',
+              onAccentColor,
+              secondaryColor,
+              '${mapService.bikeDistance(bike!).toStringAsFixed(3)} км',
               onSurfaceColor,
             ),
           ),
@@ -154,22 +136,15 @@ class _BikeCardState extends State<BikeCard> {
 
   // Описание бронирования/аренды:
   Widget rentalInfo() {
-    bool booking = widget.rental == null || widget.rental!.booking;
-    bool newRental = !booking && widget.rental!.finish == null;
-    bool oldRental = !booking && widget.rental!.finish != null;
-
+    bool booking = rental == null || rental!.booking;
+    bool newRental = !booking && rental!.finish == null;
     String type = booking ? 'Бронь ' : 'Аренда ';
-    String id = widget.rental == null ? '' : widget.rental!.id;
+    String id = rental == null ? '' : rental!.id;
     return Hidden(
-      show: widget.rental != null,
-      // Rental/Booking:
+      show: rental != null,
       child: Container(
         decoration: BoxDecoration(
-          color: booking
-              ? bookingCardBackColor
-              : newRental
-              ? accentColor
-              : rentalCardBackColor,
+          color: newRental ? accentColor : rentalBackColor,
           borderRadius: BorderRadius.circular(_borderRadius),
         ),
         padding: const EdgeInsets.all(8),
@@ -177,18 +152,20 @@ class _BikeCardState extends State<BikeCard> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Rental/Booking id:
-            iconedText(
+            uiService.iconedText(
               booking ? Icons.bookmark_outline : Icons.key,
-              newRental ? onAccentColor : accentColor,
+              accentColor,
+              onAccentColor,
               type + id,
               newRental ? onAccentColor : onSurfaceColor,
             ),
             SizedBox(height: 8),
             // Rental/Booking time:
-            iconedText(
+            uiService.iconedText(
               Icons.schedule_outlined,
-              newRental ? onAccentColor : accentColor,
-              dates(widget.rental),
+              accentColor,
+              onAccentColor,
+              dates(rental),
               newRental ? onAccentColor : onSurfaceColor,
             ),
           ],
@@ -199,36 +176,35 @@ class _BikeCardState extends State<BikeCard> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: cardColor,
-        borderRadius: BorderRadius.circular(_borderRadius),
-        border: Border.all(
-          color: cardColor, // Border color
-          width: 2.0, // Border thickness
-        ),
-      ),
-
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Hidden(show: widget.smallImage, child: bikeImage()),
-          Hidden(show: widget.smallImage, child: const SizedBox(width: 8)),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Hidden(show: !widget.smallImage, child: bikeImage()),
-                Hidden(
-                  show: !widget.smallImage,
-                  child: const SizedBox(height: 8),
-                ),
-                bikeInfo(),
-                rentalInfo(),
-              ],
-            ),
+    return AnimatedGestureDetector(
+      onClicked: onClicked == null ? () {} : onClicked!,
+      child: Container(
+        decoration: BoxDecoration(
+          color: cardColor,
+          borderRadius: BorderRadius.circular(_borderRadius),
+          border: Border.all(
+            color: cardColor, // Border color
+            width: 2.0, // Border thickness
           ),
-        ],
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Hidden(show: leftImage, child: bikeImage()),
+            Hidden(show: leftImage, child: const SizedBox(width: 8)),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Hidden(show: !leftImage, child: bikeImage()),
+                  Hidden(show: !leftImage, child: const SizedBox(height: 8)),
+                  bikeInfo(),
+                  rentalInfo(),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

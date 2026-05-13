@@ -4,7 +4,7 @@ import 'package:bike_rental_2/constants.dart';
 import 'package:flutter/material.dart';
 
 // Кнопка навигации:
-class BottomButton extends StatefulWidget {
+class BottomButton extends StatelessWidget {
   const BottomButton({
     super.key,
     required this.text,
@@ -23,31 +23,29 @@ class BottomButton extends StatefulWidget {
   final IconData icon;
 
   @override
-  State<BottomButton> createState() => _BottomButtonState();
-}
-
-class _BottomButtonState extends State<BottomButton> {
-  @override
   Widget build(BuildContext context) {
+    Color backColor = enabled ? color : disabledColor;
+    Color iconColor = enabled ? onSurfaceColor : disabledColor;
     return Padding(
       padding: const EdgeInsets.all(2),
       child: AnimatedGestureDetector(
-        onClicked: widget.onClicked,
-        enabled: widget.enabled,
+        onClicked: onClicked,
+        enabled: enabled,
         child: Container(
-          height: widget.height,
+          height: height,
           decoration: BoxDecoration(
-            color: widget.enabled ? widget.color : disabledColor,
+            color: backColor,
             borderRadius: BorderRadius.circular(24),
+            boxShadow: [uiService.buttonShadow()],
           ),
           padding: EdgeInsets.symmetric(horizontal: 2, vertical: 0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(widget.icon, color: onAccentColor),
+              uiService.circledIcon(icon, iconColor, cardColor),
               const SizedBox(height: 8),
               Text(
-                widget.text,
+                text,
                 textAlign: TextAlign.center,
                 style: uiService.buttonTextStyle(),
               ),
